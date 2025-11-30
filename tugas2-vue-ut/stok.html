@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>SITTA - Stok Bahan Ajar</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/stok-style.css">
+</head>
+<body>
+
+    <div class="container" id="app">
+        <a href="index.html" class="back-link">← Kembali ke Dashboard</a>
+
+        <header>
+            <h1>📦 Stok Bahan Ajar ({{ computedStokCount }} Item)</h1>
+            <span>**Watcher Status:** {{ watchStatus }}</span>
+        </header>
+
+        <div class="filter-group">
+            <label for="filterUpbjj">Filter UPBJJ:</label>
+            <select id="filterUpbjj" v-model="filter.upbjj">
+                <option value="">Semua UPBJJ</option>
+                <option v-for="upbjj in upbjjList" :value="upbjj">{{ upbjj }}</option>
+            </select>
+
+            <label for="filterKategori" style="margin-left: 20px;">Filter Kategori:</label>
+            <select id="filterKategori" v-model="filter.kategori">
+                <option value="">Semua Kategori</option>
+                <option v-for="kategori in kategoriList" :value="kategori">{{ kategori }}</option>
+            </select>
+            
+            <label style="margin-left: 20px;">Cari Judul/Kode:</label>
+            <input type="text" v-model="filter.search" placeholder="Contoh: EKMA4116 atau Manajemen">
+        </div>
+
+        <button @click="resetFilters">Bersihkan Filter</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Kode</th>
+                    <th>Judul</th>
+                    <th>Kategori</th>
+                    <th>UPBJJ</th>
+                    <th>Rak</th>
+                    <th>Harga</th>
+                    <th>Qty (Stok)</th>
+                    <th>Catatan</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in filteredStok" :key="item.kode" 
+                    :class="{'low-stock': isLowStock(item.qty, item.safety)}">
+                    
+                    <td>{{ item.kode }}</td>
+                    <td>{{ item.judul }}</td>
+                    <td>{{ item.kategori }}</td>
+                    <td>{{ item.upbjj }}</td>
+                    <td>{{ item.lokasiRak }}</td>
+                    <td>Rp {{ formatRupiah(item.harga) }}</td>
+                    <td>
+                        {{ item.qty }}
+                        <span v-if="item.qty <= 0"> (HABIS)</span>
+                        <span v-else-if="item.qty <= item.safety"> (MENIPIS!)</span>
+                        <span v-else> (OK)</span>
+                    </td>
+                    <td class="note-cell" v-html="item.catatanHTML"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <p v-if="filteredStok.length === 0" style="text-align: center; margin-top: 20px;">
+            Tidak ada data stok yang cocok dengan filter yang diterapkan.
+        </p>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script src="dataBahanAjar.js"></script>
+    <script src="stok-app.js"></script>
+</body>
+</html>

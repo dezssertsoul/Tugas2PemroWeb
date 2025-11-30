@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>SITTA - Tracking DO</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/tracking-style.css">
+</head>
+<body>
+
+    <div class="container" id="app">
+        <a href="index.html" class="back-link">← Kembali ke Dashboard</a>
+        <h1>🚚 Tracking Delivery Order (DO)</h1>
+
+        <div class="input-group">
+            <label for="doInput">Masukkan Nomor DO:</label>
+            <input type="text" id="doInput" v-model="doNumber" placeholder="Contoh: DO2025-0001">
+            <button @click="trackDO" style="margin-left: 10px;">Cek Status</button>
+        </div>
+
+        <div class="result-box">
+            <div v-if="doResult">
+                <h2>Status DO: **{{ doResult.status }}**</h2>
+                
+                <p>Nomor DO: **{{ activeDo }}**</p>
+                <p>Penerima: **{{ doResult.nama }}** (NIM: {{ doResult.nim }})</p>
+                <p>Paket: **{{ getPackageName(doResult.paket) }}**</p>
+                <p>Total Harga: **Rp {{ formatRupiah(doResult.total) }}**</p>
+                <p>Ekspedisi: **{{ doResult.ekspedisi }}** (Kirim: {{ doResult.tanggalKirim }})</p>
+
+                <hr>
+                <h3>Riwayat Perjalanan:</h3>
+                <ul v-if="doResult.perjalanan && doResult.perjalanan.length" class="tracking-list">
+                    <li v-for="step in doResult.perjalanan.slice().reverse()">
+                        <strong>{{ step.waktu }}</strong>: {{ step.keterangan }}
+                    </li>
+                </ul>
+                <p v-else>Riwayat perjalanan belum tersedia.</p>
+            </div>
+
+            <p v-else-if="activeDo">
+                Nomor DO **{{ activeDo }}** tidak ditemukan dalam sistem. Pastikan nomor sudah benar.
+            </p>
+            <p v-else>
+                Silakan masukkan Nomor DO untuk melihat status.
+            </p>
+        </div>
+
+    </div>
+
+    <script src="js/dataBahanAjar.js"></script>
+    <script src="js/tracking-app.js"></script>
+
+</body>
+</html>
